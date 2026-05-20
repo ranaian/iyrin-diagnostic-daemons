@@ -9,3 +9,13 @@ I do most of my work on a Lenovo T460 Thinkpad, which was originally released in
 While my laptop was useable again, it began experiencing a number of problems, namely losing power with no warning despite reporting perfectly normal charge and voltage levels.
 Out of frustration and a need to have a functioning laptop, I decided that the best course of action was to come up with a way to record the symptoms I was experiencing to diagnose the causes. 
 Unfortunately because of the way the first one I made works, there's actually measurable lag in the timestamps, so keeping the data being logged lightweight is the name of the game when I'm trying to record events that, from a user perspective, happen instantaneously. Therefore, from the initial Iyr "VC" I plan to create a small suite of related daemons that continuously log one or two parameters at a time, to expand their diagnostic capabilities.
+
+## Iyr "VC"
+* Aggressively logs battery Voltage and Charge percentage
+* Records events - power rail voltage bleed, AC power status change, sudden changes in reported battery percentage
+* Benchmark events - every 300 seconds records AC power status and voltage of batteries 0 and 1
+
+## Iyr "AW" 
+* Aggressively logs battery Amps and Watts (does not currently actually record amps)
+* Records Events - none currently 
+* Benchmark Events - every 300 seconds records amps and watts for batteries 0 and 1 (does not currently actually record amps) 
