@@ -5,6 +5,11 @@ Iyrin are my suite of critical power event diagnostic daemons
 From the Aramaic עִיר ʿiyr, plural עִירִין ʿiyrin, referring to the angel "Watchers", these daemons are built to watch themselves - and your laptop - die.
 Implementing a circular buffer in their logfiles, they aggressively poll the power state of the device and record what they see up to the moment of power failure, to aid in diagnosing the causes of my, and hopefully your, laptop problems.
 
+## Assumptions
+
+Currently, I believe that the Iyrin only function on Linux laptops, as I have no way of testing whether they work on Mac or Windows laptops.
+I assume the fix is as simple as updating the function that gathers the battery data, but once again I have no way of testing whether I've done it correctly.
+
 ## Why?
 
 I do most of my work on a Lenovo T460 Thinkpad, which was originally released in 2016. Due to age and problems with Windows, in 2025 I switched to running Ubuntu and started performing maintenance on the device. However, due to financial and availability reasons, I had to use 3rd party replacements for the power supply port and batteries.
