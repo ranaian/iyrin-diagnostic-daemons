@@ -155,12 +155,15 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
 
             # periodically log battery info as event
             if time.time() - last_time >= 300:
-                b0v = bat0["Current"] if bat0 else "N/A"
-                b1v = bat1["Current"] if bat1 else "N/A"
+                b0a = bat0["Current"] if bat0 else "N/A"
+                b0w = bat0["Power"] if bat0 else "N/A"
+                b1a = bat1["Current"] if bat1 else "N/A"
+                b1w = bat1["Power"] if bat1 else "N/A"
                 log_event(
                     iyr_event_log, f"System Current Stable at {timestamp}:"
                     f" AC : {ac_online}, active : {active}, "
-                    f"BAT0 : {b0v}mV, BAT1 : {b1v}mV")
+                    f"BAT0 : {b0a}mA, BAT1 : {b1a}mA, "
+                    f"BAT0 : {b0w}mW, BAT1 : {b1w}mW")
                 last_time = time.time()
 
             data_line = (f"{timestamp},{active},"
