@@ -49,14 +49,15 @@ def get_battery_info(bat_id):
                 return default_val
 
         status = read_file("status", default_val="N/A")
-        current = read_file("current_now")
-        power = read_file("power_now")
+        voltage = int(read_file("voltage_now")) // 1000
+        power = int(read_file("power_now"))
+        current = power // voltage
 
         return {
             "Name": bat_id,
             "Status": status,
-            "Current": (int(current) // 1000) if current.isdigit() else 0,
-            "Power": (int(power) // 1000) if power.isdigit() else 0,
+            "Current": current,
+            "Power": power // 1000,
 
         }
     except OSError as e:
