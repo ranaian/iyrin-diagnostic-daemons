@@ -154,19 +154,18 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
                     f"BAT0 : {b0v}mV, BAT1 : {b1v}mV")
                 last_time = time.time()
 
-            data_line = (f"{timestamp},{active},"
-                         f"{bat0['Status'] if bat0 else 'N/A'},"
-                         f"{bat0['Voltage'] if bat0 else '0'},"
-                         f"{bat0['Percentage'] if bat0 else 'N/A'},"
-                         f"{bat1['Status'] if bat1 else 'N/A'},"
-                         f"{bat1['Voltage'] if bat1 else '0'},"
-                         f"{bat1['Percentage'] if bat1 else 'N/A'}".ljust(
-                row_size-1) + '\n')
-            # data_line = data_str.ljust(row_size-1) + '\n'
+            data_str = (f"{timestamp},{active},"
+                        f"{bat0['Status'] if bat0 else 'N/A'},"
+                        f"{bat0['Voltage'] if bat0 else '0'},"
+                        f"{bat0['Percentage'] if bat0 else 'N/A'},"
+                        f"{bat1['Status'] if bat1 else 'N/A'},"
+                        f"{bat1['Voltage'] if bat1 else '0'},"
+                        f"{bat1['Percentage'] if bat1 else 'N/A'}")
+            data_line = data_str.ljust(row_size-1) + '\n'
             csvfile.seek((current_row+1) * row_size)
             csvfile.write(data_line.encode('ascii'))
             next_row = (current_row + 1) % max_rows
-            gap_line = ('' * (row_size - 1) + '\n').encode('ascii')
+            gap_line = ((" " * (row_size - 1)) + '\n').encode('ascii')
             csvfile.seek((next_row + 1) * row_size)
             csvfile.write(gap_line)
             os.fsync(csvfile.fileno())
