@@ -1,0 +1,28 @@
+# iyrin - diagnostic - daemon service
+#
+# installation guide 
+# 
+# copy and rename this file to reference the iyr enabled by it in ExecStart
+# e.g. iyr-vc.service for Iyr VC, iyr-aw.service for Iyr Aw, etc
+# install the file where the rest of your daemons live
+# e.g. /usr/lib/systemd/system/iyr-XX.service
+# make sure your path is absolute from the root directory - 
+# not /Documents/folder/iyr_XX.py but /home/user/Documents/folder/iyr_XX.py
+#
+# reload the system daemons, and start the service. it should begin logging 
+# in the same folder where the iyrin are installed  
+#
+# Copyright (C) 2026 Ranaian 
+# License GNU GPL v3.0
+
+[Unit]
+Description=Iyrin Diagnostic Daemon startup 
+After=power-profiles-daemon.service
+
+[Service]
+Type=Simple
+ExecStart=/usr/bin/python3 /your/path/to/installation/iyr_XX.py
+KillMode=process
+SendSIGKILL=no
+
+[Install]

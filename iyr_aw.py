@@ -186,14 +186,15 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
             time.sleep(interval)
 
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-# log_destination = os.path.join(script_dir, "iyr_log_Current_Charge.csv")
-daemon_thread = threading.Thread(
-    target=log_battery_info,
-    args=(script_dir, 0.01, 500),
-    daemon=True
-)
-daemon_thread.start()
+if __name__ == "__main__":
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # log_destination = os.path.join(script_dir, "iyr_log_Current_Charge.csv")
+    daemon_thread = threading.Thread(
+        target=log_battery_info,
+        args=(script_dir, 0.01, 500),
+        daemon=True
+    )
+    daemon_thread.start()
 
 try:
     while True:

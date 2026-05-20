@@ -1,3 +1,4 @@
+# B version of Iyr VC for streamline testing
 """
     Iyr Daemon "VC" monitors laptop battery voltage and charge percentage in a Linux environment.
     It continuously reads and logs battery information and power state changes and anomalies.
@@ -64,7 +65,7 @@ def log_event(iyr_event_log, message):
         f.write(f"{timestamp} - {message}\n")
 
 
-def log_battery_info(tar_dir, interval=0.01, max_rows=500):
+def log_battery_info(log_file, event_file, interval=0.01, max_rows=500):
     """Main function of the daemon - 
        - defines log files 
        - initializes log file with headers and empty rows
@@ -74,38 +75,34 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
        - detects certain events such as AC power state changes and unusual battery behavior 
        and appends them to the event log file
        """
-    # unique log file for this daemon
-    iyr_vc_log = os.path.join(tar_dir, "iyr_vc_log.csv")
-    # shared event log for all iyr daemons to log events and anomalies together
-    iyr_event_log = os.path.join(
-        tar_dir, f"iyr_event_log_{datetime.now().strftime('%Y-%m-%d')}.csv")
+
     row_size = 100
     header_str = "Time,ActBat,BAT0_S,BAT0_V,BAT0_%,BAT1_S,BAT1_V,BAT1_%"
     headers = header_str.ljust(row_size-1) + "\n"
 
-    if not os.path.exists(iyr_vc_log):
-        with open(iyr_vc_log, 'w', newline='', encoding='utf-8') as csvfile:
+    if not os.path.exists(log_file):
+        with open(log_file, 'w', newline='', encoding='utf-8') as csvfile:
             csvfile.write(headers)
             empty_line = ''.ljust(row_size-1) + '\n'
             for _ in range(max_rows):
                 csvfile.write(empty_line)
 
-    if not os.path.exists(iyr_event_log):
-        with open(iyr_event_log, 'w', newline='', encoding='utf-8') as eventfile:
+    if not os.path.exists(event_file):
+        with open(event_file, 'w', newline='', encoding='utf-8') as eventfile:
             eventfile.write("Timestamp - Event Description\n")
 
     last_time = time.time()
 
     print(
-        f"Starting Iyr Daemon \"VC\" - Voltage and Charge\n"
-        f"Logging battery info to {iyr_vc_log} every {interval} seconds")
-    log_event(iyr_event_log, "Iyr Daemon \"VC\" - Voltage and Charge - Initialized at " +
+        f"Starting Iyr Daemon \"VC\" B - Voltage and Charge\n"
+        f"Logging battery info to {log_file} every {interval} seconds")
+    log_event(event_file, "Iyr Daemon \"VC\" - Voltage and Charge - Initialized at " +
               datetime.now().strftime("%d/%m/%Y, %H:%M:%S.%f")[:-2])
 
     last_bat0_pct = None
     last_ac_state = None
 
-    with open(iyr_vc_log, 'rb+', buffering=0) as csvfile:
+    with open(log_file, 'rb+', buffering=0) as csvfile:
         current_row = 0
 
         while True:
@@ -123,7 +120,7 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
             # Detect AC power state changes and log as events
             if last_ac_state is not None and ac_online != last_ac_state:
                 log_event(
-                    iyr_event_log, f"AC State Change: "
+                    event_file, f"AC State Change: "
                     f"{'Connected' if ac_online == '1' else 'Disconnected'} at {timestamp}")
             last_ac_state = ac_online
 
@@ -132,14 +129,14 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
                 if bat0["Percentage"] == 0.0 and abs(bat1["Voltage"] - (bat0["Voltage"])) < 150:
                     if last_bat0_pct != 0.0:
                         log_event(
-                            iyr_event_log, f"Battery Crosstalk detected: "
+                            event_file, f"Battery Crosstalk detected: "
                             f"BAT0 reporting 0% with voltage rail bleed ({bat0["Voltage"]}mV) "
                             f"with BAT1 reporting {bat1["Percentage"]}% and {bat1["Voltage"]}mV "
                             f"at {timestamp}")
 
                 if last_bat0_pct is not None and (last_bat0_pct - bat0["Percentage"] > 10):
                     log_event(
-                        iyr_event_log, f"Sudden drop in BAT0 charge detected: "
+                        event_file, f"Sudden drop in BAT0 charge detected: "
                         f"from {last_bat0_pct}% to {bat0["Percentage"]}% at {timestamp}")
 
                 last_bat0_pct = bat0["Percentage"]
@@ -149,7 +146,7 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
                 b0v = bat0["Voltage"] if bat0 else "N/A"
                 b1v = bat1["Voltage"] if bat1 else "N/A"
                 log_event(
-                    iyr_event_log, f"System Voltage Stable at {timestamp}:"
+                    event_file, f"System Voltage Stable at {timestamp}:"
                     f" AC : {ac_online}, active : {active}, "
                     f"BAT0 : {b0v}mV, BAT1 : {b1v}mV")
                 last_time = time.time()
@@ -175,9 +172,14 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
 
 if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    # unique log file for this daemon
+    iyr_vc_log = os.path.join(script_dir, "iyr_vc_log.csv")
+    # shared event log for all iyr daemons to log events and anomalies together
+    iyr_event_log = os.path.join(
+        script_dir, f"iyr_event_log_{datetime.now().strftime('%Y-%m-%d')}.csv")
     daemon_thread = threading.Thread(
         target=log_battery_info,
-        args=(script_dir, 0.01, 500),
+        args=(iyr_vc_log, iyr_event_log, 0.01, 500),
         daemon=True
     )
     daemon_thread.start()
