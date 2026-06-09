@@ -3,7 +3,7 @@
 # installation guide 
 # 
 # copy and rename this file to reference the iyr enabled by it in ExecStart
-# e.g. iyr-vc.service for Iyr VC, iyr-aw.service for Iyr Aw, etc
+# e.g. iyr-vc.service for Iyr VC, iyr-aw.service for Iyr AW, etc
 # install the file where the rest of your daemons live
 # e.g. /usr/lib/systemd/system/iyr-XX.service
 # make sure your path is absolute from the root directory - 

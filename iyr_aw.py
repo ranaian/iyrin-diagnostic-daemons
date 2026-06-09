@@ -128,6 +128,23 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
                 active = "Bat1"
             timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-2]
 
+            # detect sudden jumps in current draw and log as events
+            last_bat_current = None
+            active_bat = None
+            # detect active battery to determine behavior
+            if active == "Bat0":
+                active_bat = bat0
+            elif active == "Bat1":
+                active_bat = bat1
+            if active_bat is not None:
+                if last_bat_current is not None and abs(active_bat["Current"] - last_bat_current) > 150:
+                    log_event(
+                        iyr_event_log, f"Sudden change in battery {active} current detected: "
+                        f"from {last_bat_current}mA to {active_bat["Current"]}mA at {timestamp}"
+                    )
+                last_bat_current = None if active == "None" else (
+                    bat0["Current"] if active == "Bat0" else bat1["Current"])
+
             # disabled due to overlap with Iyr "VC"
 
             # Detect AC power state changes and log as events

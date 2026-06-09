@@ -137,7 +137,7 @@ def log_battery_info(tar_dir, interval=0.01, max_rows=500):
                             f"with BAT1 reporting {bat1["Percentage"]}% and {bat1["Voltage"]}mV "
                             f"at {timestamp}")
 
-                if last_bat0_pct is not None and (last_bat0_pct - bat0["Percentage"] > 10):
+                if last_bat0_pct is not None and (last_bat0_pct - bat0["Percentage"] > 0.1):
                     log_event(
                         iyr_event_log, f"Sudden drop in BAT0 charge detected: "
                         f"from {last_bat0_pct}% to {bat0["Percentage"]}% at {timestamp}")
